@@ -13,9 +13,16 @@ import Layout from "../layouts/Layout.astro";
     </select>
 
     <select name="sex" id="sex">
-        <option value="">male and female penguins</option>
+        <option value="">All sex</option>
         <option value="FEMALE">female penguins</option>
         <option value="MALE">male penguins</option>
+    </select>
+
+    <select name="island" id="island">
+        <option value="">All islands</option>
+        <option value="Biscoe">Biscoe</option>
+        <option value="Dream">Dream</option>
+        <option value="Torgersen">Torgersen</option>
     </select>
 
     <div id="graphique"></div>
@@ -28,10 +35,14 @@ import Layout from "../layouts/Layout.astro";
             "#species",
         ) as HTMLSelectElement;
         const selectSex = document.querySelector("#sex") as HTMLSelectElement;
+        const selectIsland = document.querySelector(
+            "#island",
+        ) as HTMLSelectElement;
 
         function renderPlot() {
             const species = selectSpecies.value;
             const sex = selectSex.value;
+            const island = selectIsland.value;
             const div = document.querySelector("#graphique") as HTMLDivElement;
             div.innerHTML = "";
             const plot = Plot.plot({
@@ -45,7 +56,8 @@ import Layout from "../layouts/Layout.astro";
                         stroke: "species",
                         filter: (d) =>
                             (species === "" || d.species === species) &&
-                            (sex === "" || d.sex === sex),
+                            (sex === "" || d.sex === sex) &&
+                            (island === "" || d.island === island),
                     }),
                 ],
             });
@@ -54,6 +66,7 @@ import Layout from "../layouts/Layout.astro";
 
         selectSpecies.addEventListener("change", renderPlot);
         selectSex.addEventListener("change", renderPlot);
+        selectIsland.addEventListener("change", renderPlot);
         renderPlot();
     </script>
 </Layout>
