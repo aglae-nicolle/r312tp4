@@ -1,55 +1,48 @@
 ---
-import PlotFigure from "../components/PlotFigure.astro";
 import Layout from "../layouts/Layout.astro";
-import * as Plot from "@observablehq/plot";
-import penguins from "../assets/penguins.json";
-
-const especes = ["Adelie", "Chinstrap", "Gentoo"];
 ---
 
 <Layout>
     <h1 class="text-2xl">Test Astro et Plot (Observablehq)</h1>
+
     <select name="species" id="species">
+        <option value="">All species</option>
         <option value="Adelie">Adelie</option>
         <option value="Chinstrap">Chinstrap</option>
         <option value="Gentoo">Gentoo</option>
-    </select>;
+    </select>
 
-    {
-        especes.map((espece) => (
-            <div data-species={espece} hidden>
-                <PlotFigure
-                    options={{
-                        x: { domain: [30, 60] },
-                        y: { domain: [12, 22] },
-                        color: { domain: especes },
-                        marks: [
-                            Plot.dot(
-                                penguins.filter((d) => d.species === espece),
-                                {
-                                    x: "culmen_length_mm",
-                                    y: "culmen_depth_mm",
-                                    stroke: "species",
-                                },
-                            ),
-                        ],
-                    }}
-                />
-            </div>
-        ))
-    }
+    <div id="graphique"></div>
 
     <script>
-        const select = document.querySelector("#species");
-        const blocs = document.querySelectorAll("[data-species]");
+        import * as Plot from "@observablehq/plot";
+        import penguins from "../assets/penguins.json";
 
-        function afficher() {
-            blocs.forEach((bloc) => {
-                bloc.hidden = bloc.dataset.species !== select.value;
+        const selectSpecies = document.querySelector(
+            "#species",
+        ) as HTMLSelectElement;
+
+        function renderPlot() {
+            const species = selectSpecies.value;
+            const div = document.querySelector("#graphique") as HTMLDivElement;
+            div.innerHTML = "";
+            const plot = Plot.plot({
+                x: { domain: [30, 60] },
+                y: { domain: [12, 22] },
+                color: { domain: ["Adelie", "Chinstrap", "Gentoo"] },
+                marks: [
+                    Plot.dot(penguins, {
+                        x: "culmen_length_mm",
+                        y: "culmen_depth_mm",
+                        stroke: "species",
+                        filter: (d) => species === "" || d.species === species,
+                    }),
+                ],
             });
+            div.append(plot);
         }
 
-        select.addEventListener("change", afficher);
-        afficher();
+        selectSpecies.addEventListener("change", renderPlot);
+        renderPlot();
     </script>
 </Layout>
