@@ -1,0 +1,30 @@
+---
+import Layout from "../../layouts/Layout.astro";
+---
+
+<Layout>
+    <h1 class="mb-4 text-2xl font-semibold">Penguins</h1>
+    <p class="mb-4 text-sm text-stone-600">
+        Longueur du bec × profondeur du bec, couleur = espèce.
+    </p>
+    <div id="myplot"></div>
+</Layout>
+
+<script>
+    import * as Plot from "@observablehq/plot";
+    import penguins from "../../assets/penguins.json";
+
+    const plot = Plot.plot({
+        grid: true,
+        color: { legend: true },
+        marks: [
+            Plot.dot(penguins, {
+                x: "culmen_length_mm",
+                y: "culmen_depth_mm",
+                stroke: "species",
+            }),
+        ],
+    });
+
+    document.querySelector("#myplot")?.append(plot);
+</script>

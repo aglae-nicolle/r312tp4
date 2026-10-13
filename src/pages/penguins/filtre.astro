@@ -1,0 +1,66 @@
+---
+import Layout from "../../layouts/Layout.astro";
+---
+
+<Layout>
+    <h1 class="mb-4 text-2xl font-semibold">Penguins, filtre espèce</h1>
+
+    <label class="mb-4 block text-sm" for="species">
+        Espèce
+        <select
+            class="mt-1 block rounded border border-stone-300 bg-white px-2 py-1"
+            name="species"
+            id="species"
+        >
+            <option value="">All species</option>
+            <option value="Adelie">Adelie</option>
+            <option value="Chinstrap">Chinstrap</option>
+            <option value="Gentoo">Gentoo</option>
+        </select>
+    </label>
+
+    <p id="count" class="mb-2 text-sm text-stone-600"></p>
+    <div id="plot"></div>
+</Layout>
+
+<script>
+    import * as Plot from "@observablehq/plot";
+    import penguins from "../../assets/penguins.json";
+
+    const selectSpecies = document.querySelector(
+        "#species",
+    ) as HTMLSelectElement;
+    const count = document.querySelector("#count") as HTMLElement;
+
+    function renderPlot() {
+        const species = selectSpecies.value;
+        const div = document.querySelector("#plot") as HTMLDivElement;
+        div.innerHTML = "";
+
+        const data = penguins.filter(
+            (d) =>
+                d.culmen_length_mm != null &&
+                d.culmen_depth_mm != null &&
+                (!species || d.species === species),
+        );
+        count.innerText = `${data.length} manchot(s)`;
+
+        const plot = Plot.plot({
+            grid: true,
+            color: { legend: true },
+            marks: [
+                Plot.dot(penguins, {
+                    x: "culmen_length_mm",
+                    y: "culmen_depth_mm",
+                    stroke: "species",
+                    filter: (d) => !species || d.species === species,
+                }),
+            ],
+        });
+
+        div.append(plot);
+    }
+
+    selectSpecies.addEventListener("change", renderPlot);
+    renderPlot();
+</script>

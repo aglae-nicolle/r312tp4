@@ -1,0 +1,22 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout>
+    <h1 class="mb-4 text-2xl font-semibold">Simple</h1>
+    <p class="mb-4 text-sm text-stone-600">
+        Histogramme de 10 000 tirages aléatoires, généré dans le navigateur.
+    </p>
+    <div id="myplot"></div>
+</Layout>
+
+<script>
+    import * as Plot from "@observablehq/plot";
+
+    const plot = Plot.rectY(
+        { length: 10000 },
+        Plot.binX({ y: "count" }, { x: Math.random }),
+    ).plot();
+    const div = document.querySelector("#myplot");
+    div?.append(plot);
+</script>

@@ -1,0 +1,82 @@
+---
+import Layout from "../../layouts/Layout.astro";
+---
+
+<Layout>
+    <h1 class="mb-4 text-2xl font-semibold">Cars, poids × consommation</h1>
+
+    <div class="mb-4 flex flex-wrap gap-4 text-sm">
+        <label for="origin">
+            Origine
+            <select
+                class="mt-1 block rounded border border-stone-300 bg-white px-2 py-1"
+                id="origin"
+            >
+                <option value="">All</option>
+                <option value="USA">USA</option>
+                <option value="Europe">Europe</option>
+                <option value="Japan">Japan</option>
+            </select>
+        </label>
+        <label for="cylinders">
+            Cylindres
+            <select
+                class="mt-1 block rounded border border-stone-300 bg-white px-2 py-1"
+                id="cylinders"
+            >
+                <option value="">All</option>
+                <option value="4">4</option>
+                <option value="6">6</option>
+                <option value="8">8</option>
+            </select>
+        </label>
+    </div>
+
+    <p id="count" class="mb-2 text-sm text-stone-600"></p>
+    <div id="plot"></div>
+</Layout>
+
+<script>
+    import * as Plot from "@observablehq/plot";
+    import cars from "../../assets/cars.json";
+
+    const selectOrigin = document.querySelector("#origin") as HTMLSelectElement;
+    const selectCylinders = document.querySelector(
+        "#cylinders",
+    ) as HTMLSelectElement;
+    const count = document.querySelector("#count") as HTMLElement;
+
+    function renderPlot() {
+        const origin = selectOrigin.value;
+        const cylinders = selectCylinders.value;
+        const div = document.querySelector("#plot") as HTMLDivElement;
+        div.innerHTML = "";
+
+        const matches = (d: (typeof cars)[number]) =>
+            d.Miles_per_Gallon != null &&
+            d.Weight_in_lbs != null &&
+            (!origin || d.Origin === origin) &&
+            (!cylinders || String(d.Cylinders) === cylinders);
+
+        count.innerText = `${cars.filter(matches).length} voiture(s)`;
+
+        div.append(
+            Plot.plot({
+                grid: true,
+                color: { legend: true },
+                marks: [
+                    Plot.dot(cars, {
+                        x: "Weight_in_lbs",
+                        y: "Miles_per_Gallon",
+                        stroke: "Origin",
+                        filter: matches,
+                    }),
+                ],
+            }),
+        );
+    }
+
+    selectOrigin.addEventListener("change", renderPlot);
+    selectCylinders.addEventListener("change", renderPlot);
+    renderPlot();
+</script>

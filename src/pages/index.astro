@@ -1,21 +1,29 @@
 ---
-import PlotFigure from "../components/PlotFigure.astro";
 import Layout from "../layouts/Layout.astro";
-import * as Plot from "@observablehq/plot";
-import penguins from "../assets/penguins.json";
 ---
 
 <Layout>
-  <div id="myplot"></div>
-
-  <script>
-    import * as Plot from "@observablehq/plot";
-
-    const plot = Plot.rectY(
-      { length: 10000 },
-      Plot.binX({ y: "count" }, { x: Math.random }),
-    ).plot();
-    const div = document.querySelector("#myplot");
-    div.append(plot);
-  </script>
+    <h1 class="mb-4 text-2xl font-semibold">Essais Plot, côté client</h1>
+    <ul class="list-disc space-y-2 pl-5">
+        <li>
+            <a class="underline" href="/simple">Simple</a> — histogramme aléatoire
+            (ESM bundlé par Astro)
+        </li>
+        <li>
+            <a class="underline" href="/penguins/simple">Simple penguins</a> — nuage
+            de points du JSON
+        </li>
+        <li>
+            <a class="underline" href="/penguins/filtre">Penguins + espèce</a>
+        </li>
+        <li>
+            <a class="underline" href="/penguins/filtres"
+                >Penguins + espèce, île, sexe</a
+            >
+        </li>
+        <li>
+            <a class="underline" href="/cars/filtres">Cars</a> — autre jeu de données,
+            mêmes filtres
+        </li>
+    </ul>
 </Layout>
